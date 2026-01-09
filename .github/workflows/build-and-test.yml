@@ -129,14 +129,11 @@ jobs:
             echo "EOF"
           } >> $GITHUB_ENV
           
-          # Only fail if result is explicitly "false"
-          if [[ "$RESULT" == "false" ]]; then
-            echo "Pipeline failed: result is false" >&2
-            exit 1
-          fi
+          # Store result for later use
+          echo "CODEMIE_RESULT=$RESULT" >> $GITHUB_ENV
 
       - name: Comment PR with CodeMie Response
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && always()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -160,6 +157,12 @@ jobs:
           gh pr comment $PR_NUMBER --body-file comment.md
           
           echo "Comment posted to PR #${PR_NUMBER}"
+
+      - name: Check CodeMie Result
+        if: env.CODEMIE_RESULT == 'false'
+        run: |
+          echo "CodeMie analysis failed: result is false" >&2
+          exit 1
             
 
       - name: Validate Workflow
