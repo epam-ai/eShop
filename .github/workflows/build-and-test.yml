@@ -96,6 +96,7 @@ jobs:
       - name: Call CodeMie Agent
         env:
           ACCESS_TOKEN: ${{ steps.auth.outputs.access_token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           set -euo pipefail
           
@@ -103,7 +104,7 @@ jobs:
             -H "Content-Type: application/json" \
             -H "Accept: application/json" \
             -H "Authorization: Bearer $ACCESS_TOKEN" \
-            -d "{\"text\": \"Hi\"}")
+            -d "{\"text\": \"Review PR # $PR_NUMBER \"}")
           echo "$RESPONSE"
           GENERATED=$(echo "$RESPONSE" | jq -r '.generated')
           #RESULT=$(echo "$GENERATED" | grep -oP 'result: \K\w+' | head -1)
