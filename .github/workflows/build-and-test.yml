@@ -103,7 +103,7 @@ jobs:
             -d "{\"text\": \"Hi\"}")
           echo "$RESPONSE"
           GENERATED=$(echo "$RESPONSE" | jq -r '.generated')
-          RESULT=$(echo "$GENERATED" | grep -oP 'result: \K\w+' | head -1)
+          #RESULT=$(echo "$GENERATED" | grep -oP 'result: \K\w+' | head -1)
           
           echo "CodeMie Agent Response:"
           echo "$GENERATED"
