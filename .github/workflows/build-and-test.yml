@@ -104,15 +104,31 @@ jobs:
           echo "$RESPONSE"
           GENERATED=$(echo "$RESPONSE" | jq -r '.generated')
           RESULT=$(echo "$GENERATED" | grep -oP 'result: \K\w+' | head -1)
-          DETAIL=$(echo "$GENERATED" | sed -n '/detail:/,$p' | sed '1d')
           
           echo "CodeMie Agent Response:"
-          echo "$DETAIL"
+          echo "$GENERATED"
+          
+          # Store generated for PR comment
+          echo "GENERATED<<EOF" >> $GITHUB_ENV
+          echo "$GENERATED" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
           
           if [[ "$RESULT" != "true" ]]; then
             echo "Pipeline failed: result is false" >&2
             exit 1
           fi
+
+      - name: Comment PR with CodeMie Response
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## CodeMie Agent Analysis\n\n\`\`\`\n${{ env.GENERATED }}\n\`\`\``
+            })
 
       - name: Validate Workflow
         run: |
