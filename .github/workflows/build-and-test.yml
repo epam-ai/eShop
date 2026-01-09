@@ -105,7 +105,7 @@ jobs:
             -H "Accept: application/json" \
             -H "Authorization: Bearer $ACCESS_TOKEN" \
             -d "{\"text\": \"Review PR # $PR_NUMBER \"}")
-          
+          echo "$RESPONSE"
           GENERATED=$(echo "$RESPONSE" | jq -r '.generated')
           RESULT=$(echo "$GENERATED" | grep -oP 'result: \K\w+' | head -1)
           
