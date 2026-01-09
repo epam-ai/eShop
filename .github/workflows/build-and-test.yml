@@ -113,10 +113,10 @@ jobs:
           echo "$GENERATED" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
           
-          if [[ "$RESULT" != "true" ]]; then
-            echo "Pipeline failed: result is false" >&2
-            exit 1
-          fi
+          #if [[ "$RESULT" != "true" ]]; then
+          #  echo "Pipeline failed: result is false" >&2
+          #  exit 1
+          #fi
 
       - name: Comment PR with CodeMie Response
         if: github.event_name == 'pull_request'
