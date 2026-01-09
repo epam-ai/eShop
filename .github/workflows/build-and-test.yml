@@ -105,9 +105,9 @@ jobs:
             -H "Accept: application/json" \
             -H "Authorization: Bearer $ACCESS_TOKEN" \
             -d "{\"text\": \"Review PR # $PR_NUMBER \"}")
-          echo "$RESPONSE"
+          
           GENERATED=$(echo "$RESPONSE" | jq -r '.generated')
-          #RESULT=$(echo "$GENERATED" | grep -oP 'result: \K\w+' | head -1)
+          RESULT=$(echo "$GENERATED" | grep -oP 'result: \K\w+' | head -1)
           
           echo "CodeMie Agent Response:"
           echo "$GENERATED"
@@ -117,10 +117,10 @@ jobs:
           echo "$GENERATED" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
           
-          #if [[ "$RESULT" != "true" ]]; then
-          #  echo "Pipeline failed: result is false" >&2
-          #  exit 1
-          #fi
+          if [[ "$RESULT" != "true" ]]; then
+            echo "Pipeline failed: result is false" >&2
+            exit 1
+          fi
 
       - name: Comment PR with CodeMie Response
         if: github.event_name == 'pull_request'
@@ -128,13 +128,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
-          RUN_ID="${{ github.run_id }}"
-          
-          gh pr comment $PR_NUMBER --body "## CodeMie Agent Analysis - Run #${RUN_ID}
-          
-          **Timestamp:** ${TIMESTAMP}
-          
+          gh pr comment $PR_NUMBER --body "## CodeMie Agent Analysis 
           \`\`\`
           ${{ env.GENERATED }}
           \`\`\`"
