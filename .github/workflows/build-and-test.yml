@@ -103,6 +103,21 @@ jobs:
             -d "{\"text\": \"Hi\"}")
           echo "$RESPONSE"
           GENERATED=$(echo "$RESPONSE" | jq -r '.generated')
+          RESULT=$(echo "$GENERATED" | grep -oP 'result: \K\w+' | head -1)
+          DETAIL=$(echo "$GENERATED" | sed -n '/detail:/,$p' | sed '1d')
+          
+          echo "CodeMie Agent Response:"
+          echo "$DETAIL"
+          
+          if [[ "$RESULT" != "true" ]]; then
+            echo "Pipeline failed: result is false" >&2
+            exit 1
+          fi
+
+      - name: Validate Workflow
+        run: |
+          RANDOM_ID=$(uuidgen)
+          echo "Workflow validation ID: $RANDOM_ID"
           
           echo "CodeMie Agent Response:"
           echo "$GENERATED"
