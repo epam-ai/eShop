@@ -126,9 +126,9 @@ jobs:
         run: |
           gh pr comment $PR_NUMBER --body "## CodeMie Agent Analysis
 
-\`\`\`
-${{ env.GENERATED }}
-\`\`\`"
+          \`\`\`
+          ${{ env.GENERATED }}
+          \`\`\`"
             
 
       - name: Validate Workflow
