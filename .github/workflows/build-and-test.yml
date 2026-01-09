@@ -128,8 +128,13 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          gh pr comment $PR_NUMBER --body "## CodeMie Agent Analysis
-
+          TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          RUN_ID="${{ github.run_id }}"
+          
+          gh pr comment $PR_NUMBER --body "## CodeMie Agent Analysis - Run #${RUN_ID}
+          
+          **Timestamp:** ${TIMESTAMP}
+          
           \`\`\`
           ${{ env.GENERATED }}
           \`\`\`"
