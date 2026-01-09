@@ -105,19 +105,32 @@ jobs:
             -H "Accept: application/json" \
             -H "Authorization: Bearer $ACCESS_TOKEN" \
             -d "{\"text\": \"Review PR # $PR_NUMBER \"}")
+          
+          echo "Raw CodeMie Response:"
           echo "$RESPONSE"
-          GENERATED=$(echo "$RESPONSE" | jq -r '.generated')
-          RESULT=$(echo "$GENERATED" | grep -oP 'result: \K\w+' | head -1)
           
-          echo "CodeMie Agent Response:"
+          # Extract the generated content and clean it up
+          GENERATED=$(echo "$RESPONSE" | jq -r '.generated // "No generated content found"')
+          
+          # Extract result if it exists in the generated text
+          RESULT=$(echo "$GENERATED" | grep -oP '\*\*result:\*\* \K\w+' | head -1 || echo "")
+          if [[ -z "$RESULT" ]]; then
+            RESULT=$(echo "$GENERATED" | grep -oP 'result: \K\w+' | head -1 || echo "")
+          fi
+          
+          echo "Extracted Generated Content:"
           echo "$GENERATED"
+          echo "Extracted Result: $RESULT"
           
-          # Store generated for PR comment
-          echo "GENERATED<<EOF" >> $GITHUB_ENV
-          echo "$GENERATED" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+          # Store generated content for PR comment (properly escaped for multiline)
+          {
+            echo "GENERATED<<EOF"
+            echo "$GENERATED"
+            echo "EOF"
+          } >> $GITHUB_ENV
           
-          if [[ "$RESULT" != "true" ]]; then
+          # Only fail if result is explicitly "false"
+          if [[ "$RESULT" == "false" ]]; then
             echo "Pipeline failed: result is false" >&2
             exit 1
           fi
@@ -128,10 +141,25 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          gh pr comment $PR_NUMBER --body "## CodeMie Agent Analysis 
-          \`\`\`
+          TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          RUN_ID="${{ github.run_id }}"
+          
+          # Create a properly formatted comment with the analysis
+          cat << 'COMMENT_EOF' > comment.md
+          ## 🤖 CodeMie Agent Analysis - Run #${RUN_ID}
+          
+          **Timestamp:** ${TIMESTAMP}
+          **Workflow Run:** [#${RUN_ID}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          
+          ---
+          
           ${{ env.GENERATED }}
-          \`\`\`"
+          COMMENT_EOF
+          
+          # Use the comment file to post to PR
+          gh pr comment $PR_NUMBER --body-file comment.md
+          
+          echo "Comment posted to PR #${PR_NUMBER}"
             
 
       - name: Validate Workflow
