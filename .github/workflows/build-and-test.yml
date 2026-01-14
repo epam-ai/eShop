@@ -140,6 +140,13 @@ jobs:
           JSON_PAYLOAD=$(jq -n \
             --arg text "$USER_PROMPT" \
             '{text: $text}')
+          
+          # DEBUG: Print JSON Payload to Console
+          echo "----------------------------------------"
+          echo "🔍 JSON PAYLOAD (DEBUG)"
+          echo "----------------------------------------"
+          echo "$JSON_PAYLOAD"
+          echo "----------------------------------------"
 
           # 5. Send Request (Capture response, do NOT echo yet)
           echo "Sending to CodeMie Agent..."
