@@ -12,23 +12,16 @@ jobs:
   build-and-test:
     name: Build, Test and Analyze
     runs-on: ubuntu-latest
-    env:
-      ASSISTANT_ID: ${{ secrets.ASSISTANT_ID }}
-    
+
     steps:
-      # 1. Checkout source code
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Shallow clones should be disabled for a better relevance of analysis
-
-      # 2. Install required dependencies (Setup environment)
-      # Uses global.json to pick the correct .NET SDK version
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.417'
-
       - name: Show selected SDK
         run: dotnet --version
       - name: Update Workloads
