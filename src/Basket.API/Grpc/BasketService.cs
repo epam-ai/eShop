@@ -37,10 +37,10 @@ public class BasketService(
             ThrowNotAuthenticated();
         }
 
-        // if (logger.IsEnabled(LogLevel.Debug))
-        // {
-        //     logger.LogDebug("Begin UpdateBasket call from method {Method} for basket id {Id}", context.Method, userId);
-        // }
+        if (logger.IsEnabled(LogLevel.Debug))
+        {
+            logger.LogDebug("Begin UpdateBasket call from method {Method} for basket id {Id}", context.Method, userId);
+        }
 
         var customerBasket = MapToCustomerBasket(userId, request);
         var response = await repository.UpdateBasketAsync(customerBasket);
