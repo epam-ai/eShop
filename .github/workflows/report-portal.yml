@@ -2,10 +2,7 @@ name: Report Portal
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-  workflow_dispatch:
+    branches: [ release/8.0 ]
 
 permissions:
   contents: read
