@@ -30,7 +30,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          global-json-file: global.json
+          dotnet-version: '9.0.x'
 
       # JDK 17 is required for SonarScanner
       - name: Set up JDK 17
