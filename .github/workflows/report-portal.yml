@@ -31,7 +31,10 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x.x'
-          
+
+      - name: Show selected SDK
+        run: dotnet --version
+
       # 4. Install dependencies (Restore)
       - name: Restore dependencies
         run: dotnet restore eShop.slnx
