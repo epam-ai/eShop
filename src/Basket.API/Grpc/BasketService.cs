@@ -12,11 +12,15 @@ public class BasketService(
     [AllowAnonymous]
     public override async Task<CustomerBasketResponse> GetBasket(GetBasketRequest request, ServerCallContext context)
     {
-        logger.LogDebug("Testing the agent");
         var userId = context.GetUserIdentity();
         if (string.IsNullOrEmpty(userId))
         {
             return new();
+        }
+
+        if (logger.IsEnabled(LogLevel.Debug))
+        {
+            logger.LogDebug("Begin GetBasketById call from method {Method} for basket id {Id}", context.Method, userId);
         }
 
         var data = await repository.GetBasketAsync(userId);
