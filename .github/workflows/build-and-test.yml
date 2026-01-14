@@ -159,6 +159,13 @@ jobs:
              exit 1
           fi
 
+          # DEBUG: Print the RAW response so we can see what the agent actually said
+          echo "----------------------------------------"
+          echo "🔍 RAW AGENT RESPONSE (DEBUG)"
+          echo "----------------------------------------"
+          echo "$GENERATED"
+          echo "----------------------------------------"
+
           # Logic updated: 
           # 1. Look for 'FINAL_STATUS'.
           # 2. Use 'tail -1' to ensure we take the LAST verdict (ignoring initial doubts).
@@ -169,8 +176,16 @@ jobs:
              RESULT=$(echo "$GENERATED" | grep -oP 'result\W+\K(true|false)' | tail -1)
           fi
 
-          # Extract details (removing the status line to keep comment clean)
+          # Extract details
+          # -i flag in sed for case-insensitive matching is not standard in all linux versions, 
+          # so we use a fallback mechanism instead.
           DETAIL=$(echo "$GENERATED" | sed -n '/detail:/,$p' | sed '1d' | sed '/FINAL_STATUS:/d')
+
+          # FALLBACK: If extraction failed (DETAIL is empty) but GENERATED is not, use the full message
+          if [[ -z "$DETAIL" ]]; then
+            echo "::warning::Could not parse 'detail' section. Using full response."
+            DETAIL="$GENERATED"
+          fi
 
           echo "----------------------------------------"
           echo "🤖 Agent Analysis Report"
