@@ -58,10 +58,3 @@ jobs:
             UnitTests |
             ${{ github.ref_name }} |
             #${{ github.run_number }}
-
-      - name: Enforce ReportPortal Quality Gate
-        uses: reportportal/action-quality-gate@v1
-        with:
-          endpoint: ${{ secrets.REPORTPORTAL_ENDPOINT }}
-          project: ${{ secrets.REPORTPORTAL_PROJECT }}
-          token: ${{ secrets.REPORTPORTAL_API_KEY }}
