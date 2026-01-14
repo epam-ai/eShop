@@ -30,18 +30,18 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.x.x'
+          dotnet-version: '8.0.417'
 
       - name: Show selected SDK
         run: dotnet --version
 
       # 4. Install dependencies (Restore)
       - name: Restore dependencies
-        run: dotnet restore eShop.slnx
+        run: dotnet restore eShop.sln
 
       # 5. Build the application
       - name: Build
-        run: dotnet build eShop.slnx --no-restore --configuration Debug
+        run: dotnet build eShop.sln --no-restore --configuration Debug
 
       - name: Run Unit Tests with ReportPortal
         run: dotnet test --logger:"console;verbosity=normal" --logger:"ReportPortal"
