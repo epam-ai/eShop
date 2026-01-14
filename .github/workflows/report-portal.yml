@@ -39,7 +39,7 @@ jobs:
         run: dotnet build eShop.Web.slnf
 
       - name: Run Unit Tests with ReportPortal
-        run: dotnet test eShop.Web.slnf --logger:"console;verbosity=normal" --logger:"ReportPortal"
+        run: dotnet test tests/Ordering.UnitTests/Ordering.UnitTests.csproj --logger:"console;verbosity=normal" --logger:"ReportPortal"
         env:
           ReportPortal__Server__Url: ${{ secrets.REPORTPORTAL_ENDPOINT }}
           ReportPortal__Server__Project: ${{ secrets.REPORTPORTAL_PROJECT }}
@@ -47,6 +47,6 @@ jobs:
           ReportPortal__Launch__Name: >
             GitHubActions |
             ${{ github.repository }} |
-            UnitTests |
+            Ordering.UnitTests |
             ${{ github.ref_name }} |
             #${{ github.run_number }}
