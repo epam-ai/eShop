@@ -39,7 +39,7 @@ jobs:
         run: dotnet build eShop.Web.slnf
 
       - name: Run Unit Tests with ReportPortal
-        run: dotnet test --logger:"console;verbosity=normal" --logger:"ReportPortal"
+        run: dotnet test eShop.Web.slnf --logger:"console;verbosity=normal" --logger:"ReportPortal"
         env:
           RP_UUID: ${{ secrets.REPORTPORTAL_API_KEY }}
           RP_ENDPOINT: ${{ secrets.REPORTPORTAL_ENDPOINT }}
