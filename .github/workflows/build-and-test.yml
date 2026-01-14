@@ -161,17 +161,29 @@ jobs:
           echo "$GENERATED"
           echo "----------------------------------------"
 
-          # 7. Parse the Agent's JSON Output
-          # We expect: { "ValidationResult": bool, "Message": "string" }
+          # --- FIX: CLEANING THE OUTPUT ---
+          # Extract only the content between the first '{' and the last '}'
+          # This ignores any markdown fences (```json) or introductory text.
+          CLEAN_JSON=$(echo "$GENERATED" | sed -n '/^{/,/^}/p')
           
-          VALIDATION_RESULT=$(echo "$GENERATED" | jq -r '.ValidationResult')
-          MESSAGE=$(echo "$GENERATED" | jq -r '.Message')
+          # Fallback: If sed failed (e.g., if response is a single line or formatting differs), 
+          # try stripping markdown code blocks specifically.
+          if [[ -z "$CLEAN_JSON" ]]; then
+             CLEAN_JSON=$(echo "$GENERATED" | sed 's/```json//g' | sed 's/```//g')
+          fi
 
           echo "----------------------------------------"
-          echo "🤖 Agent Analysis Report"
+          echo "🤖 Agent Analysis Report (Cleaned)"
           echo "----------------------------------------"
-          echo "$MESSAGE"
+          echo "$CLEAN_JSON"
           echo "----------------------------------------"
+
+          # 7. Parse the Agent's JSON Output
+          # We use CLEAN_JSON now instead of GENERATED
+          
+          VALIDATION_RESULT=$(echo "$CLEAN_JSON" | jq -r '.ValidationResult')
+          MESSAGE=$(echo "$CLEAN_JSON" | jq -r '.Message')
+
           echo "Parsed Result: $VALIDATION_RESULT"
 
           # 8. Act on Result
