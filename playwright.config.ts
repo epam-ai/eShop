@@ -21,19 +21,27 @@ export default defineConfig({
   reporter: process.env.CI 
     ? [
         ['html'],
-        ['@reportportal/agent-js-playwright', {
-          apiKey: process.env.RP_API_KEY,
-          endpoint: process.env.RP_ENDPOINT,
-          project: process.env.RP_PROJECT,
-          launch: process.env.RP_LAUNCH || 'Playwright E2E Tests',
-          description: 'eShop Playwright E2E Tests',
-          attributes: [
-            {
-              key: 'environment',
-              value: 'CI'
-            }
-          ]
-        }]
+        ...(process.env.RP_API_KEY && process.env.RP_ENDPOINT && process.env.RP_PROJECT 
+          ? [['@reportportal/agent-js-playwright', {
+              apiKey: process.env.RP_API_KEY,
+              endpoint: process.env.RP_ENDPOINT,
+              project: process.env.RP_PROJECT,
+              launch: process.env.RP_LAUNCH || 'Playwright E2E Tests',
+              description: 'eShop Playwright E2E Tests',
+              mode: 'DEFAULT',
+              debug: false,
+              attributes: [
+                {
+                  key: 'environment',
+                  value: 'CI'
+                }
+              ],
+              restClientConfig: {
+                timeout: 30000
+              }
+            }]]
+          : []
+        )
       ]
     : 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
