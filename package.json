@@ -11,6 +11,7 @@
   "license": "ISC",
   "devDependencies": {
     "@playwright/test": "^1.42.1",
+    "@reportportal/agent-js-playwright": "^5.3.3",
     "@types/node": "^20.11.25",
     "dotenv": "^16.4.5"
   }

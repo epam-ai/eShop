@@ -1,7 +1,7 @@
 name: Playwright Tests for eShop
 on:
   push:
-    branches: [ main ]
+    branches: [ main, release/8.0 ]
     paths-ignore:
       - '**.md'
       - 'src/ClientApp/**'
@@ -45,6 +45,10 @@ jobs:
         ESHOP_USE_HTTP_ENDPOINTS: 1
         USERNAME1: bob
         PASSWORD: Pass123$
+        RP_API_KEY: ${{ secrets.REPORTPORTAL_API_KEY }}
+        RP_ENDPOINT: ${{ secrets.REPORTPORTAL_ENDPOINT }}
+        RP_PROJECT: ${{ secrets.REPORTPORTAL_PROJECT }}
+        RP_LAUNCH: "Playwright E2E | ${{ github.repository }} | ${{ github.ref_name }} | #${{ github.run_number }}"
     - uses: actions/upload-artifact@v4
       if: always()
       with:
