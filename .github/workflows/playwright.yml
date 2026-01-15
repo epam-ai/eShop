@@ -41,10 +41,10 @@ jobs:
         USERNAME1: bob
         PASSWORD: Pass123$
         RP_API_KEY: ${{ secrets.REPORTPORTAL_API_KEY }}
-        RP_ENDPOINT: ${{ secrets.REPORTPORTAL_ENDPOINT }}
+        RP_ENDPOINT: "https://reportportal.epam.com/api/v1"
         RP_PROJECT: ${{ secrets.REPORTPORTAL_PROJECT }}
         RP_LAUNCH: "Playwright E2E | ${{ github.repository }} | ${{ github.ref_name }} | #${{ github.run_number }}"
-        ReportPortal__Server__Url: ${{ secrets.REPORTPORTAL_ENDPOINT }}
+        ReportPortal__Server__Url: "https://reportportal.epam.com/api/v1"
         ReportPortal__Server__Project: ${{ secrets.REPORTPORTAL_PROJECT }}
         ReportPortal__Server__ApiKey: ${{ secrets.REPORTPORTAL_API_KEY }}
         ReportPortal__Launch__Name: >
