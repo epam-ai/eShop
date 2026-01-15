@@ -44,6 +44,16 @@ jobs:
         RP_ENDPOINT: ${{ secrets.REPORTPORTAL_ENDPOINT }}
         RP_PROJECT: ${{ secrets.REPORTPORTAL_PROJECT }}
         RP_LAUNCH: "Playwright E2E | ${{ github.repository }} | ${{ github.ref_name }} | #${{ github.run_number }}"
+        ReportPortal__Server__Url: ${{ secrets.REPORTPORTAL_ENDPOINT }}
+        ReportPortal__Server__Project: ${{ secrets.REPORTPORTAL_PROJECT }}
+        ReportPortal__Server__ApiKey: ${{ secrets.REPORTPORTAL_API_KEY }}
+        ReportPortal__Launch__Name: >
+          Playwright E2E -- |
+          ${{ github.repository }} |
+          Ordering.UnitTests |
+          ${{ github.ref_name }} |
+          #${{ github.run_number }}
+        
     - uses: actions/upload-artifact@v4
       if: always()
       with:
