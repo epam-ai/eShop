@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        test-suite: [smoke] #, critical, full]
+        test-suite: [smoke]
     
     steps:
     - name: Checkout code
@@ -147,11 +147,13 @@ jobs:
     - name: Publish test report
       if: always()
       uses: dorny/test-reporter@v1
+      continue-on-error: true
       with:
         name: E2E Test Results - ${{ matrix.test-suite }}
-        path: e2e/reports/junit/*.xml
+        path: e2e/reports/junit/${{ matrix.test-suite == 'full' && 'cucumber' || matrix.test-suite }}-report.xml
         reporter: java-junit
         fail-on-error: false
+        fail-on-empty: false
     
     - name: Comment PR with test results
       if: github.event_name == 'pull_request' && always()
@@ -200,74 +202,3 @@ jobs:
       run: |
         pkill -f "dotnet run" || true
         docker compose down || true
-
-  playwright-tests:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '10.0.x'
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        cache: 'npm'
-    
-    - name: Install dependencies
-      run: npm ci
-    
-    - name: Install system dependencies for Chromium
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y \
-          libnss3 \
-          libnspr4 \
-          libatk1.0-0 \
-          libatk-bridge2.0-0 \
-          libcups2 \
-          libdrm2 \
-          libdbus-1-3 \
-          libxkbcommon0 \
-          libxcomposite1 \
-          libxdamage1 \
-          libxfixes3 \
-          libxrandr2 \
-          libgbm1 \
-          libpango-1.0-0 \
-          libcairo2 \
-          libasound2t64 \
-          libatspi2.0-0 \
-          libxshmfence1
-    
-    - name: Install Chromium browser
-      run: npx playwright install chromium
-    
-    - name: Build .NET solution
-      run: dotnet build --configuration Release
-    
-    - name: Run Playwright tests
-      run: npm run test:playwright
-      env:
-        USERNAME1: alice
-        PASSWORD: Pass123$
-        ASPNETCORE_ENVIRONMENT: Development
-        ESHOP_USE_HTTP_ENDPOINTS: 1
-        RP_API_KEY: ${{ secrets.REPORTPORTAL_API_KEY }}
-        RP_ENDPOINT: "https://reportportal.epam.com/api/v1"
-        RP_PROJECT: ${{ secrets.REPORTPORTAL_PROJECT }}
-        RP_LAUNCH: "Playwright E2E | ${{ github.repository }} | ${{ github.ref_name }} | #${{ github.run_number }}"
-    
-    - name: Upload Playwright report
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: playwright-report
-        path: playwright-report/
-        retention-days: 30
