@@ -237,21 +237,13 @@ jobs:
     - name: Build .NET solution
       run: dotnet build --configuration Release
     
-    - name: Start eShop application
-      run: |
-        dotnet run --project src/eShop.AppHost/eShop.AppHost.csproj &
-        echo "Waiting for application to start..."
-        timeout 300 bash -c 'until curl -f http://localhost:5045/health 2>/dev/null; do sleep 5; done' || true
-        sleep 30
-      env:
-        ASPNETCORE_ENVIRONMENT: Development
-        ESHOP_USE_HTTP_ENDPOINTS: 1
-    
     - name: Run Playwright tests
       run: npm run test:playwright
       env:
         USERNAME1: alice
         PASSWORD: Pass123$
+        ASPNETCORE_ENVIRONMENT: Development
+        ESHOP_USE_HTTP_ENDPOINTS: 1
         RP_API_KEY: ${{ secrets.REPORTPORTAL_API_KEY }}
         RP_ENDPOINT: "https://reportportal.epam.com/api/v1"
         RP_PROJECT: ${{ secrets.REPORTPORTAL_PROJECT }}
@@ -264,7 +256,3 @@ jobs:
         name: playwright-report
         path: playwright-report/
         retention-days: 30
-    
-    - name: Stop application
-      if: always()
-      run: pkill -f "dotnet run" || true
