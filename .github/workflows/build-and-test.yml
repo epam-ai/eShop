@@ -109,8 +109,12 @@ jobs:
 
           # 2. Extract Code Diff
           # We compare the target branch (base) vs current commit (head)
+          # Strictly selecting '*.cs' files only, then excluding non-unit tests.
           echo "Fetching Code Diff..."
-          DIFF_CONTENT=$(git diff origin/${{ github.base_ref }}...HEAD)
+          DIFF_CONTENT=$(git diff origin/${{ github.base_ref }}...HEAD -- '*.cs' \
+            ':(exclude)*IntegrationTests*' \
+            ':(exclude)*FunctionalTests*' \
+            ':(exclude)*E2ETests*')
 
           if [[ -z "$DIFF_CONTENT" ]]; then
             echo "No code changes detected."
