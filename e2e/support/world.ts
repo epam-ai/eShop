@@ -1,5 +1,6 @@
 import { setWorldConstructor, World, IWorldOptions } from '@cucumber/cucumber';
 import { Browser, BrowserContext, Page } from '@playwright/test';
+import { randomBytes } from 'crypto';
 
 // Import RPWorld types (without extending, to avoid type conflicts)
 // We'll use composition instead of inheritance for ReportPortal integration
@@ -215,7 +216,9 @@ class CustomWorld extends World implements EShopWorld {
   }
 
   generateCorrelationId(): string {
-    return `test-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+    // Use cryptographically secure random bytes instead of Math.random()
+    const randomSuffix = randomBytes(6).toString('base64url').substring(0, 9);
+    return `test-${Date.now()}-${randomSuffix}`;
   }
 }
 
