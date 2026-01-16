@@ -7,24 +7,45 @@ const reporter = require('cucumber-html-reporter');
 const fs = require('fs');
 const path = require('path');
 
-// Check if JSON report exists
-const jsonReportPath = path.join(__dirname, '../reports/json/cucumber-report.json');
+// Check for different report files (smoke, critical, or default)
+const reportsDir = path.join(__dirname, '../reports/json');
+const possibleReports = [
+  'cucumber-report.json',
+  'smoke-report.json',
+  'critical-report.json'
+];
 
-if (!fs.existsSync(jsonReportPath)) {
+let jsonReportPath = null;
+let reportType = 'default';
+
+for (const reportFile of possibleReports) {
+  const filePath = path.join(reportsDir, reportFile);
+  if (fs.existsSync(filePath)) {
+    jsonReportPath = filePath;
+    reportType = reportFile.replace('-report.json', '').replace('cucumber', 'full');
+    break;
+  }
+}
+
+if (!jsonReportPath) {
   console.log('⚠️  No JSON report found. Skipping HTML report generation.');
+  console.log(`   Checked: ${possibleReports.join(', ')}`);
   process.exit(0);
 }
+
+console.log(`📊 Generating HTML report from: ${path.basename(jsonReportPath)}`);
 
 // Configure report options
 const options = {
   theme: 'bootstrap',
   jsonFile: jsonReportPath,
-  output: path.join(__dirname, '../reports/html/cucumber-report.html'),
+  output: path.join(__dirname, `../reports/html/${reportType}-report.html`),
   reportSuiteAsScenarios: true,
   scenarioTimestamp: true,
   launchReport: false,
   metadata: {
     'Application': 'eShop',
+    'Test Suite': reportType.charAt(0).toUpperCase() + reportType.slice(1),
     'Test Environment': process.env.TEST_ENV || 'local',
     'Base URL': process.env.BASE_URL || 'http://localhost:5045',
     'Browser': 'Chromium (Playwright)',
@@ -33,7 +54,7 @@ const options = {
     'Executed': new Date().toISOString()
   },
   failedSummaryReport: true,
-  brandTitle: 'eShop E2E Test Report',
+  brandTitle: `eShop E2E Test Report - ${reportType}`,
   name: 'Cucumber BDD Tests',
   columnLayout: 1
 };
