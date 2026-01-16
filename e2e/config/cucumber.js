@@ -60,7 +60,7 @@ module.exports = {
       // Use Playwright + ReportPortal instead (npm run test:playwright:rp)
       , './e2e/config/reportPortalFormatter.cjs'
     ],
-    parallel: 2,
+    parallel: 1,
     retry: 2,
     tags: '@critical'
   },
@@ -80,7 +80,7 @@ module.exports = {
       // Use Playwright + ReportPortal instead (npm run test:playwright:rp)
       , './e2e/config/reportPortalFormatter.cjs'
     ],
-    parallel: 4,
+    parallel: 1,
     retry: 2,
     tags: 'not @wip and not @flaky'
   }
