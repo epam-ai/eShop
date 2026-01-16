@@ -90,6 +90,10 @@ jobs:
         PASSWORD: Pass123$
         TEST_ENV: ci
         HEADLESS: true
+        RP_API_KEY: ${{ secrets.REPORTPORTAL_API_KEY }}
+        RP_ENDPOINT: "https://reportportal.epam.com/api/v1"
+        RP_PROJECT: ${{ secrets.REPORTPORTAL_PROJECT }}
+        RP_LAUNCH: "Cucumber E2E - Smoke | ${{ github.repository }} | ${{ github.ref_name }} | #${{ github.run_number }}"
     
     - name: Run E2E Tests - Critical
       if: matrix.test-suite == 'critical'
@@ -100,6 +104,10 @@ jobs:
         PASSWORD: Pass123$
         TEST_ENV: ci
         HEADLESS: true
+        RP_API_KEY: ${{ secrets.REPORTPORTAL_API_KEY }}
+        RP_ENDPOINT: "https://reportportal.epam.com/api/v1"
+        RP_PROJECT: ${{ secrets.REPORTPORTAL_PROJECT }}
+        RP_LAUNCH: "Cucumber E2E - Critical | ${{ github.repository }} | ${{ github.ref_name }} | #${{ github.run_number }}"
     
     - name: Run E2E Tests - Full Suite
       if: matrix.test-suite == 'full'
@@ -110,6 +118,10 @@ jobs:
         PASSWORD: Pass123$
         TEST_ENV: ci
         HEADLESS: true
+        RP_API_KEY: ${{ secrets.REPORTPORTAL_API_KEY }}
+        RP_ENDPOINT: "https://reportportal.epam.com/api/v1"
+        RP_PROJECT: ${{ secrets.REPORTPORTAL_PROJECT }}
+        RP_LAUNCH: "Cucumber E2E - Full | ${{ github.repository }} | ${{ github.ref_name }} | #${{ github.run_number }}"
     
     - name: Upload test results
       if: always()
