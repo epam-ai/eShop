@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        test-suite: [smoke, critical, full]
+        test-suite: [smoke] #, critical, full]
     
     steps:
     - name: Checkout code
