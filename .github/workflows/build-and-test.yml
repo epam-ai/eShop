@@ -49,7 +49,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          dotnet sonarscanner begin /k:"epam-ai_eShop" /o:"epam-ai" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vstest.reportsPaths="**/*.trx" /d:sonar.cs.vscoveragexml.reportsPaths="**/coverage.cobertura.xml"
+          dotnet sonarscanner begin /k:"epam-ai_eShop" /o:"epam-ai" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vstest.reportsPaths="**/*.trx" /d:sonar.coverage.exclusions="**/e2e/**,playwright.config.ts" /d:sonar.exclusions=".github/**" /d:sonar.cs.vscoveragexml.reportsPaths="**/coverage.cobertura.xml"
 
       # 4. Install dependencies (Restore)
       - name: Restore dependencies
@@ -109,8 +109,12 @@ jobs:
 
           # 2. Extract Code Diff
           # We compare the target branch (base) vs current commit (head)
+          # Strictly selecting '*.cs' files only, then excluding non-unit tests.
           echo "Fetching Code Diff..."
-          DIFF_CONTENT=$(git diff origin/${{ github.base_ref }}...HEAD)
+          DIFF_CONTENT=$(git diff origin/${{ github.base_ref }}...HEAD -- '*.cs' \
+            ':(exclude)*IntegrationTests*' \
+            ':(exclude)*FunctionalTests*' \
+            ':(exclude)*E2ETests*')
 
           if [[ -z "$DIFF_CONTENT" ]]; then
             echo "No code changes detected."
