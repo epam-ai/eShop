@@ -49,22 +49,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          dotnet sonarscanner begin \
-            /k:"epam-ai_eShop" \
-            /o:"epam-ai" \
-            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
-            /d:sonar.host.url="https://sonarcloud.io" \
-            /d:sonar.projectBaseDir="." \
-            /d:sonar.exclusions="**/e2e/**,**/node_modules/**,**/artifacts/**,**/bin/**,**/obj/**,**/wwwroot/lib/**" \
-            /d:sonar.coverage.exclusions="**/e2e/**,playwright.config.ts" \
-            /d:sonar.cpd.exclusions="**/e2e/**" \
-            /d:sonar.issue.ignore.multicriteria="e1,e2" \
-            /d:sonar.issue.ignore.multicriteria.e1.ruleKey="githubactions:S7637" \
-            /d:sonar.issue.ignore.multicriteria.e1.resourceKey="**/.github/workflows/**" \
-            /d:sonar.issue.ignore.multicriteria.e2.ruleKey="*" \
-            /d:sonar.issue.ignore.multicriteria.e2.resourceKey="**/e2e/**/*" \
-            /d:sonar.cs.vstest.reportsPaths="**/*.trx" \
-            /d:sonar.cs.vscoveragexml.reportsPaths="**/coverage.cobertura.xml"
+          dotnet sonarscanner begin /k:"epam-ai_eShop" /o:"epam-ai" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vstest.reportsPaths="**/*.trx" /d:sonar.coverage.exclusions="**/e2e/**,playwright.config.ts" /d:sonar.exclusions=".github/**" /d:sonar.cs.vscoveragexml.reportsPaths="**/coverage.cobertura.xml"
 
       # 4. Install dependencies (Restore)
       - name: Restore dependencies
